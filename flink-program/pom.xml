@@ -9,11 +9,14 @@
     <version>1.0-SNAPSHOT</version>
 
     <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <maven.compiler.source>11</maven.compiler.source>
         <maven.compiler.target>11</maven.compiler.target>
         <scala.binary.version>2.12</scala.binary.version>
         <flink.version>1.14.0</flink.version>
     </properties>
+
     <dependencies>
         <dependency>
             <groupId>org.apache.flink</groupId>
@@ -55,4 +58,5 @@
             </plugin>
         </plugins>
     </build>
+
 </project>

@@ -26,7 +26,7 @@ public class WordCount {
 
 
         // get input data
-        DataStream<String> text = null;
+        DataStream<String> text;
 
         // get default test text data
         text = env.fromElements(WordCountData.WORDS);
