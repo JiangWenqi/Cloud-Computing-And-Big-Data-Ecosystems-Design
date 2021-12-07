@@ -15,8 +15,8 @@ cd /usr/local/Cellar/apache-flink/1.14.0/libexec/bin
 
 ```bash
 
-cd flink-program
-mvn package
+cd master.VehicleTelematics
+mvn clean package -Pbuild-jar
 flink run target/flink-program-1.0-SNAPSHOT-jar-with-dependencies.jar
 
 ```
@@ -31,3 +31,5 @@ cd /usr/local/Cellar/apache-flink/1.14.0/libexec/bin
 ./stop-cluster.sh
 
 ```
+
+# [Description](./docs/description.md)
