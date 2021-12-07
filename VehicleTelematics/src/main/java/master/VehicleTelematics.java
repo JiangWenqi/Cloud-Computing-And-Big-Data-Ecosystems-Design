@@ -66,10 +66,9 @@ public class VehicleTelematics {
         DataStreamSource<VehicleReport> vehicleReports = env.createInput(csvInput, pojoType);
         // add watermark = currentMaxTimestamp - 10
         WatermarkStrategy<VehicleReport> watermarkStrategy = WatermarkStrategy
-                .<VehicleReport>forBoundedOutOfOrderness(Duration.ofSeconds(10))
+                .<VehicleReport>forBoundedOutOfOrderness(Duration.ofSeconds(5))
                 .withTimestampAssigner((event, timestamp) -> event.timestamp);
         vehicleReports.assignTimestampsAndWatermarks(watermarkStrategy);
-
         try {
             SingleOutputStreamOperator<SpeedFine> speedFines = vehicleReports.flatMap(new SpeedRadar());
             speedFines.print("[speed fines]");
