@@ -18,28 +18,21 @@
 
 package master;
 
+import master.events.SpeedFine;
 import master.events.VehicleReport;
+import master.functions.SpeedRadar;
 import master.utils.ConfigUtil;
-import org.apache.flink.api.common.eventtime.WatermarkGenerator;
-import org.apache.flink.api.common.eventtime.WatermarkGeneratorSupplier;
 import org.apache.flink.api.common.eventtime.WatermarkStrategy;
 import org.apache.flink.api.common.serialization.SimpleStringEncoder;
-import org.apache.flink.api.common.typeinfo.BasicTypeInfo;
 import org.apache.flink.api.java.io.CsvInputFormat;
 import org.apache.flink.api.java.io.PojoCsvInputFormat;
-import org.apache.flink.api.java.io.RowCsvInputFormat;
 import org.apache.flink.api.java.typeutils.PojoTypeInfo;
 import org.apache.flink.api.java.typeutils.TypeExtractor;
-import org.apache.flink.configuration.MemorySize;
 import org.apache.flink.core.fs.Path;
-import org.apache.flink.streaming.api.CheckpointingMode;
-import org.apache.flink.streaming.api.TimeCharacteristic;
-import org.apache.flink.streaming.api.datastream.DataStreamSink;
 import org.apache.flink.streaming.api.datastream.DataStreamSource;
-import org.apache.flink.streaming.api.environment.CheckpointConfig;
+import org.apache.flink.streaming.api.datastream.SingleOutputStreamOperator;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 import org.apache.flink.streaming.api.functions.sink.filesystem.StreamingFileSink;
-import org.apache.flink.streaming.api.functions.sink.filesystem.rollingpolicies.DefaultRollingPolicy;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -60,24 +53,32 @@ public class VehicleTelematics {
     public static void main(String[] args) {
 
         File inputFile = new File(DEFAULT_PARAMETERS.getProperty("input.file"));
-        File outputFile = new File(DEFAULT_PARAMETERS.getProperty("output.file"));
 
         // set up the streaming execution environment
         final StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
-        // read raw data
+        // read raw data from local csv
         Path inputFilePath = Path.fromLocalFile(inputFile);
         PojoTypeInfo<VehicleReport> pojoType = (PojoTypeInfo<VehicleReport>) TypeExtractor.createTypeInfo(VehicleReport.class);
+        // Ensure the order after pojo serialization
         String[] fieldOrder = new String[]{"timestamp", "vehicleId", "speed", "xWay", "lane", "direction", "segment", "position"};
         CsvInputFormat<VehicleReport> csvInput = new PojoCsvInputFormat<>(inputFilePath, pojoType, fieldOrder);
+        // real-time data
         DataStreamSource<VehicleReport> vehicleReports = env.createInput(csvInput, pojoType);
+        // add watermark = currentMaxTimestamp - 10
+        WatermarkStrategy<VehicleReport> watermarkStrategy = WatermarkStrategy
+                .<VehicleReport>forBoundedOutOfOrderness(Duration.ofSeconds(10))
+                .withTimestampAssigner((event, timestamp) -> event.timestamp);
+        vehicleReports.assignTimestampsAndWatermarks(watermarkStrategy);
+
         try {
-            vehicleReports.assignTimestampsAndWatermarks(WatermarkStrategy.forBoundedOutOfOrderness(Duration.ofMinutes(1)));
+            SingleOutputStreamOperator<SpeedFine> speedFines = vehicleReports.flatMap(new SpeedRadar());
+            speedFines.print("[speed fines]");
             env.execute("Vehicle Telematics");
         } catch (Exception e) {
             LOGGER.error("start error: {}", e.getMessage());
             e.printStackTrace();
         }
 
-
     }
+
 }
