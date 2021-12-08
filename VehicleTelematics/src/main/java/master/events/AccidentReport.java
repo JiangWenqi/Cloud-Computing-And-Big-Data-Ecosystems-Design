@@ -1,8 +1,5 @@
 package master.events;
 
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
-
 /** @author Vinci */
 public class AccidentReport {
   /** Time1 is the time of the first event the car stops */
@@ -84,14 +81,6 @@ public class AccidentReport {
 
   @Override
   public String toString() {
-    return "AccidentReport{" +
-            "time1=" + time1 +
-            ", time2=" + time2 +
-            ", vId=" + vId +
-            ", xWay=" + xWay +
-            ", seg=" + seg +
-            ", dir=" + dir +
-            ", pos=" + pos +
-            '}';
+    return time1 + ", " + time2 + ", " + vId + ", " + xWay + ", " + seg + ", " + dir + ", " + pos;
   }
 }

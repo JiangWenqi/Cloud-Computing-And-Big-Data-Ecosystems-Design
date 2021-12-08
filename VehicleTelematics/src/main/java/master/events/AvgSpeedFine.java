@@ -71,14 +71,7 @@ public class AvgSpeedFine {
 
   @Override
   public String toString() {
-    return "AvgSpeedFine{" +
-            "time1=" + time1 +
-            ", time2=" + time2 +
-            ", vId=" + vId +
-            ", xWay=" + xWay +
-            ", dir=" + dir +
-            ", avgSpd=" + avgSpd +
-            '}';
+    return time1 + ", " + time2 + ", " + vId + ", " + xWay + ", " + dir + ", " + avgSpd;
   }
 }
 

@@ -21,7 +21,11 @@ cd /usr/local/Cellar/apache-flink/1.14.0/libexec/bin
 
 #### Check Flink log: `/usr/local/Cellar/apache-flink/1.14.0/libexec/log`
 
+
 ## 2. Build Demo and Run it
+
+### Note: Before you run it, make sure `parameters.properties` are alright
+
 
 ```bash
 

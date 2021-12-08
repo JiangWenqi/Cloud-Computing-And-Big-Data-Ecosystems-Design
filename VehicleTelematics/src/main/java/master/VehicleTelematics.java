@@ -32,6 +32,7 @@ import org.apache.flink.api.java.io.CsvInputFormat;
 import org.apache.flink.api.java.io.PojoCsvInputFormat;
 import org.apache.flink.api.java.typeutils.PojoTypeInfo;
 import org.apache.flink.api.java.typeutils.TypeExtractor;
+import org.apache.flink.core.fs.FileSystem.WriteMode;
 import org.apache.flink.core.fs.Path;
 import org.apache.flink.streaming.api.datastream.DataStream;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
@@ -43,12 +44,20 @@ import java.util.Properties;
 public class VehicleTelematics {
 
   private static final Properties DEFAULT_PARAMETERS = new ConfigUtil().getProperties();
+  private static final String SPEED_FINES_FILENAME =
+      DEFAULT_PARAMETERS.getProperty("speed.fines.file");
+  private static final String AVGSPEED_FINES_FILENAME =
+      DEFAULT_PARAMETERS.getProperty("avgspeed.fines.file");
+  private static final String ACCIDENTS_FILENAME = DEFAULT_PARAMETERS.getProperty("accidents.file");
 
   public static void main(String[] args) throws Exception {
+    String inputFile = DEFAULT_PARAMETERS.getProperty("input.file");
+    String outputFolder = DEFAULT_PARAMETERS.getProperty("output.folder");
+
     // set up the streaming execution environment
     final StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
     // read raw data from local csv
-    Path inputFilePath = new Path(DEFAULT_PARAMETERS.getProperty("input.file"));
+    Path inputFilePath = new Path(inputFile);
     PojoTypeInfo<VehicleReport> pojoType =
         (PojoTypeInfo<VehicleReport>) TypeExtractor.createTypeInfo(VehicleReport.class);
     CsvInputFormat<VehicleReport> csvInput =
@@ -63,10 +72,15 @@ public class VehicleTelematics {
     DataStream<AccidentReport> accidentReports = AccidentReporter.report(vehicleReports);
 
     // ---------------------------- save result ------------------------------------
-    //    speedFines
-    //        .writeAsText(DEFAULT_PARAMETERS.getProperty("output.file"), WriteMode.OVERWRITE)
-    //        .setParallelism(1);
-
+    speedFines
+        .writeAsText(outputFolder + SPEED_FINES_FILENAME, WriteMode.OVERWRITE)
+        .setParallelism(1);
+    avgSpeedFines
+        .writeAsText(outputFolder + AVGSPEED_FINES_FILENAME, WriteMode.OVERWRITE)
+        .setParallelism(1);
+    accidentReports
+        .writeAsText(outputFolder + ACCIDENTS_FILENAME, WriteMode.OVERWRITE)
+        .setParallelism(1);
     env.execute("Vehicle Telematics");
   }
 
