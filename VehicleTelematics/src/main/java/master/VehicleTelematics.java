@@ -40,7 +40,7 @@ import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 import java.time.Duration;
 import java.util.Properties;
 
-/** @author Wenqi Jiang */
+/** @author Wenqi Jiang & zhou */
 public class VehicleTelematics {
 
   private static final Properties DEFAULT_PARAMETERS = new ConfigUtil().getProperties();

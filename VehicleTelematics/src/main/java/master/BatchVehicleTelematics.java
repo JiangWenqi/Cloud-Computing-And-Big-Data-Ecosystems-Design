@@ -11,7 +11,8 @@ import org.apache.flink.core.fs.FileSystem.WriteMode;
 
 import java.util.Properties;
 
-/** @author Vinci */
+/** @author Wenqi Jiang & Zhou */
+@Deprecated
 public class BatchVehicleTelematics {
 
   private static final Properties DEFAULT_PARAMETERS = new ConfigUtil().getProperties();
