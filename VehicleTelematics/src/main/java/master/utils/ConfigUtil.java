@@ -25,10 +25,11 @@ public class ConfigUtil {
     Properties properties = new Properties();
     try {
       properties.load(this.getClass().getClassLoader().getResourceAsStream(path));
+      this.properties = properties;
     } catch (Exception e) {
       throw new NullPointerException("Can't find path:" + path);
     }
-    this.properties = properties;
+
   }
 
 

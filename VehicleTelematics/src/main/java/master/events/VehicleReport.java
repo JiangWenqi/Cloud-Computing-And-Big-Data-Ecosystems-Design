@@ -6,6 +6,8 @@ package master.events;
  * @author Wenqi Jiang & Zhou
  */
 public class VehicleReport {
+    // Ensure the order after pojo serialization
+
     /**
      * Being Time a timestamp (integer) in seconds identifying the time at
      * which the position event was emitted,

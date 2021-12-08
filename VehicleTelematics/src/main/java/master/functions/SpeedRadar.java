@@ -4,6 +4,7 @@ import master.events.SpeedFine;
 import master.events.VehicleReport;
 import master.utils.ConfigUtil;
 import org.apache.flink.api.common.functions.FlatMapFunction;
+import org.apache.flink.streaming.api.datastream.DataStream;
 import org.apache.flink.util.Collector;
 
 /**
@@ -11,11 +12,18 @@ import org.apache.flink.util.Collector;
  *
  * @author Wenqi Jiang & Zhou
  */
-public class SpeedRadar implements FlatMapFunction<VehicleReport, SpeedFine> {
+public class SpeedRadar {
+
+  public static DataStream<SpeedFine> issueSpeedFines(DataStream<VehicleReport> vehicleReports) {
+    return vehicleReports.flatMap(new SpeedRadarFlatMap());
+  }
+}
+
+class SpeedRadarFlatMap implements FlatMapFunction<VehicleReport, SpeedFine> {
   private static final int MAX_SPEED = Integer.parseInt(new ConfigUtil().getProperty("max.speed"));
 
   @Override
-  public void flatMap(VehicleReport report, Collector<SpeedFine> speedFines) throws Exception {
+  public void flatMap(VehicleReport report, Collector<SpeedFine> speedFines) {
     if (report.speed > MAX_SPEED) {
       speedFines.collect(
           new SpeedFine(
