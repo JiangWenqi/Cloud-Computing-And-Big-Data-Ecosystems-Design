@@ -14,7 +14,7 @@ import org.apache.flink.util.Collector;
  */
 public class SpeedRadar {
 
-  public static DataStream<SpeedFine> issueSpeedFines(DataStream<VehicleReport> vehicleReports) {
+  public static DataStream<SpeedFine> issueFines(DataStream<VehicleReport> vehicleReports) {
     return vehicleReports.flatMap(new SpeedRadarFlatMap());
   }
 }

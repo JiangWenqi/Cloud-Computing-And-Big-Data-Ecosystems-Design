@@ -47,6 +47,10 @@ public class VehicleReport {
      */
     public int position;
 
+
+
+
+
     @Override
     public String toString() {
         return "VehicleReport{" +
@@ -61,3 +65,4 @@ public class VehicleReport {
                 '}';
     }
 }
+

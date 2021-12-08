@@ -1,24 +1,29 @@
 package master.events;
 
-public class AvgSpeedFine {
-  /** Time1 is the time of the first event of the segment */
-  private long time1;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 
-  /** Time2 is the time of the last event of the segment */
+/** @author Vinci */
+public class AccidentReport {
+  /** Time1 is the time of the first event the car stops */
+  private long time1;
+  /** Time2 is the time of the fourth event the car reports to be stopped */
   private long time2;
 
   private int vId;
   private int xWay;
+  private int seg;
   private int dir;
-  private Double avgSpd;
+  private int pos;
 
-  public AvgSpeedFine(long time1, long time2, int vId, int xWay, int dir, Double avgSpd) {
+  public AccidentReport(long time1, long time2, int vId, int xWay, int seg, int dir, int pos) {
     this.time1 = time1;
     this.time2 = time2;
     this.vId = vId;
     this.xWay = xWay;
+    this.seg = seg;
     this.dir = dir;
-    this.avgSpd = avgSpd;
+    this.pos = pos;
   }
 
   public long getTime1() {
@@ -37,20 +42,28 @@ public class AvgSpeedFine {
     this.time2 = time2;
   }
 
-  public int getVId() {
+  public int getvId() {
     return vId;
   }
 
-  public void setVId(int vId) {
+  public void setvId(int vId) {
     this.vId = vId;
   }
 
-  public int getXWay() {
+  public int getxWay() {
     return xWay;
   }
 
-  public void setXWay(int xWay) {
+  public void setxWay(int xWay) {
     this.xWay = xWay;
+  }
+
+  public int getSeg() {
+    return seg;
+  }
+
+  public void setSeg(int seg) {
+    this.seg = seg;
   }
 
   public int getDir() {
@@ -61,25 +74,24 @@ public class AvgSpeedFine {
     this.dir = dir;
   }
 
-  public Double getAvgSpd() {
-    return avgSpd;
+  public int getPos() {
+    return pos;
   }
 
-  public void setAvgSpd(Double avgSpd) {
-    this.avgSpd = avgSpd;
+  public void setPos(int pos) {
+    this.pos = pos;
   }
 
   @Override
   public String toString() {
-    return "AvgSpeedFine{" +
+    return "AccidentReport{" +
             "time1=" + time1 +
             ", time2=" + time2 +
             ", vId=" + vId +
             ", xWay=" + xWay +
+            ", seg=" + seg +
             ", dir=" + dir +
-            ", avgSpd=" + avgSpd +
+            ", pos=" + pos +
             '}';
   }
 }
-
-
