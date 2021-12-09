@@ -22,7 +22,8 @@ cd /usr/local/Cellar/apache-flink/1.14.0/libexec/bin
 
 ## 2. Build Demo and Run it
 
-### Note: Before you run it, make sure `parameters.properties` are alright
+> Note: By default the program will load `parameters.properties`, you can write your paths in it
+> or you can input your paths on command-line
 
 ```bash
 cd VehicleTelematics

@@ -3,7 +3,6 @@ package master.functions;
 import master.events.AccidentReport;
 import master.events.VehicleReport;
 import master.utils.AccidentKey;
-import master.utils.ConfigUtil;
 import master.utils.Constants;
 import org.apache.flink.api.common.functions.FilterFunction;
 import org.apache.flink.api.java.functions.KeySelector;
@@ -17,11 +16,11 @@ import java.util.Iterator;
 /** @author Vinci */
 public class AccidentReporter {
 
-
   public static DataStream<AccidentReport> report(DataStream<VehicleReport> vehicleReports) {
-    DataStream<VehicleReport> stopReports =
-        vehicleReports.filter((FilterFunction<VehicleReport>) report -> report.speed == 0);
-    return stopReports
+
+    return vehicleReports
+        .assignTimestampsAndWatermarks(Constants.WATERMARK_STRATEGY)
+        .filter((FilterFunction<VehicleReport>) report -> report.speed == 0)
         .keyBy(new AccidentKeySelector())
         .countWindow(Constants.ACCIDENT_REPORT_COUNT, 1)
         .apply(new AccidentReportFunction());

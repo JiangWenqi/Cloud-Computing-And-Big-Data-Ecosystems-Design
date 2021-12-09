@@ -27,7 +27,6 @@ import master.functions.AverageSpeedController;
 import master.functions.SpeedRadar;
 import master.utils.ConfigUtil;
 import master.utils.Constants;
-import org.apache.flink.api.common.eventtime.WatermarkStrategy;
 import org.apache.flink.api.java.io.CsvInputFormat;
 import org.apache.flink.api.java.io.PojoCsvInputFormat;
 import org.apache.flink.api.java.typeutils.PojoTypeInfo;
@@ -37,7 +36,6 @@ import org.apache.flink.core.fs.Path;
 import org.apache.flink.streaming.api.datastream.DataStream;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 
-import java.time.Duration;
 import java.util.Properties;
 
 /** @author Wenqi Jiang & zhou */
@@ -53,6 +51,10 @@ public class VehicleTelematics {
   public static void main(String[] args) throws Exception {
     String inputFile = DEFAULT_PARAMETERS.getProperty("input.file");
     String outputFolder = DEFAULT_PARAMETERS.getProperty("output.folder");
+    if (args.length == 2) {
+      inputFile = args[0];
+      outputFolder = args[1];
+    }
 
     // set up the streaming execution environment
     final StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
@@ -64,9 +66,8 @@ public class VehicleTelematics {
         new PojoCsvInputFormat<>(inputFilePath, pojoType, Constants.VEHICLE_REPORT_FIELDS);
     // real-time data
     DataStream<VehicleReport> vehicleReports = env.createInput(csvInput, pojoType);
-    vehicleReports.assignTimestampsAndWatermarks(reportWatermark(Duration.ofSeconds(35)));
 
-    // -------------------- speed fines ----------------------------------------
+    // -----------------------------calculation--------------------------------
     DataStream<SpeedFine> speedFines = SpeedRadar.issueFines(vehicleReports);
     DataStream<AvgSpeedFine> avgSpeedFines = AverageSpeedController.issueFines(vehicleReports);
     DataStream<AccidentReport> accidentReports = AccidentReporter.report(vehicleReports);
@@ -81,13 +82,7 @@ public class VehicleTelematics {
     accidentReports
         .writeAsText(outputFolder + ACCIDENTS_FILENAME, WriteMode.OVERWRITE)
         .setParallelism(1);
-    env.execute("Vehicle Telematics");
-  }
 
-  /** @return watermark strategy */
-  private static WatermarkStrategy<VehicleReport> reportWatermark(Duration maxOutOfOrderness) {
-    // add watermark = currentMaxTimestamp - maxOutOfOrderness
-    return WatermarkStrategy.<VehicleReport>forBoundedOutOfOrderness(maxOutOfOrderness)
-        .withTimestampAssigner((event, timestamp) -> event.timestamp * 1000);
+    env.execute("Vehicle Telematics");
   }
 }
