@@ -1,7 +1,7 @@
 package master.events;
 
 /**
- * @author Wenqi Jiang & Zhou
+ * @author Wenqi Jiang & Zhuo Cheng
  */
 public class SpeedFine {
     private long time;

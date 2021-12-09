@@ -12,7 +12,7 @@ import org.apache.flink.util.Collector;
 /**
  * Issue a ticket (Time, VID, XWay, Seg, Dir, Spd)
  *
- * @author Wenqi Jiang & Zhou
+ * @author Wenqi Jiang & Zhuo Cheng
  */
 public class SpeedRadar {
 

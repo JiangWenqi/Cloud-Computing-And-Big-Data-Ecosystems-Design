@@ -38,7 +38,7 @@ import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 
 import java.util.Properties;
 
-/** @author Wenqi Jiang & zhou */
+/** @author Wenqi Jiang & Zhuo Cheng */
 public class VehicleTelematics {
 
   private static final Properties DEFAULT_PARAMETERS = new ConfigUtil().getProperties();
@@ -49,25 +49,28 @@ public class VehicleTelematics {
   private static final String ACCIDENTS_FILENAME = DEFAULT_PARAMETERS.getProperty("accidents.file");
 
   public static void main(String[] args) throws Exception {
-    String inputFile = DEFAULT_PARAMETERS.getProperty("input.file");
-    String outputFolder = DEFAULT_PARAMETERS.getProperty("output.folder");
+    // ------------------ read input file & output folder ----------------------------
+    String inputFile;
+    String outputFolder;
     if (args.length == 2) {
       inputFile = args[0];
       outputFolder = args[1];
+    } else {
+      throw new NullPointerException(
+          "Please check you command, make sure it has $PATH_TO_INPUT_FILE $PATH_TO_OUTPUT_FOLDER");
     }
 
     // set up the streaming execution environment
     final StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
-    // read raw data from local csv
+    // ------------------- read raw data from a local csv -------------------------------
     Path inputFilePath = new Path(inputFile);
     PojoTypeInfo<VehicleReport> pojoType =
         (PojoTypeInfo<VehicleReport>) TypeExtractor.createTypeInfo(VehicleReport.class);
     CsvInputFormat<VehicleReport> csvInput =
         new PojoCsvInputFormat<>(inputFilePath, pojoType, Constants.VEHICLE_REPORT_FIELDS);
-    // real-time data
     DataStream<VehicleReport> vehicleReports = env.createInput(csvInput, pojoType);
 
-    // -----------------------------calculation--------------------------------
+    // ----------------------------- calculation --------------------------------
     DataStream<SpeedFine> speedFines = SpeedRadar.issueFines(vehicleReports);
     DataStream<AvgSpeedFine> avgSpeedFines = AverageSpeedController.issueFines(vehicleReports);
     DataStream<AccidentReport> accidentReports = AccidentReporter.report(vehicleReports);

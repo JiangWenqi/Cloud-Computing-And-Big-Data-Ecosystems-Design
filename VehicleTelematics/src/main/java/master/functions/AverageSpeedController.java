@@ -13,7 +13,7 @@ import org.apache.flink.streaming.api.windowing.time.Time;
 import org.apache.flink.streaming.api.windowing.windows.TimeWindow;
 import org.apache.flink.util.Collector;
 
-/** @author Wenqi Jiang & Zhou */
+/** @author Wenqi Jiang & Zhuo Cheng  */
 public class AverageSpeedController {
 
   public static DataStream<AvgSpeedFine> issueFines(DataStream<VehicleReport> vehicleReports) {
@@ -22,7 +22,7 @@ public class AverageSpeedController {
         .filter(
             (FilterFunction<VehicleReport>) report -> report.segment >= 52 && report.segment <= 56)
         .keyBy(new AverageSpeedKeySelector())
-        .window(TumblingEventTimeWindows.of(Time.hours(5)))
+        .window(TumblingEventTimeWindows.of(Time.minutes(5)))
         .apply(new AverageSpeedDetection());
   }
 }

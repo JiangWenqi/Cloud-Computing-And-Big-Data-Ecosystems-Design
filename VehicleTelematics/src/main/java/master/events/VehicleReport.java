@@ -3,7 +3,7 @@ package master.events;
 /**
  * Vehicle Report POJO
  *
- * @author Wenqi Jiang & Zhou
+ * @author Wenqi Jiang & Zhuo Cheng
  */
 public class VehicleReport {
     // Ensure the order after pojo serialization

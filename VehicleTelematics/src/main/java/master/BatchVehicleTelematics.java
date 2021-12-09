@@ -11,7 +11,7 @@ import org.apache.flink.core.fs.FileSystem.WriteMode;
 
 import java.util.Properties;
 
-/** @author Wenqi Jiang & Zhou */
+/** @author Wenqi Jiang & Zhuo Cheng */
 @Deprecated
 public class BatchVehicleTelematics {
 
