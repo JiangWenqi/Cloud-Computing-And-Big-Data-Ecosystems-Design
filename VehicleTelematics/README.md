@@ -27,7 +27,7 @@ cd /usr/local/Cellar/apache-flink/1.14.0/libexec/bin
 ```bash
 cd VehicleTelematics
 mvn clean package -Pbuild-jar
-flink run -p 3 -c master.VehicleTelematics target/VehicleTelematics-1.0-SNAPSHOT.jar $PATH_TO_INPUT_FILE $PATH_TO_OUTPUT_FOLDER
+flink run -p 3 -c master.VehicleTelematics target/VehicleTelematics-x.x.x.jar $PATH_TO_INPUT_FILE $PATH_TO_OUTPUT_FOLDER
 ```
 
 ## 3. Check Your Program In Web Page `localhost:8081`
