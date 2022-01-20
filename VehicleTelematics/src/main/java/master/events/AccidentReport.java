@@ -1,6 +1,6 @@
 package master.events;
 
-/** @author Wenqi Jiang & Zhuo Cheng*/
+/** @author Wenqi Jiang & Zhuo Cheng */
 public class AccidentReport {
   /** Time1 is the time of the first event the car stops */
   private long time1;

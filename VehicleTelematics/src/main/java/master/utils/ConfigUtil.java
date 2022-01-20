@@ -29,9 +29,7 @@ public class ConfigUtil {
     } catch (Exception e) {
       throw new NullPointerException("Can't find path:" + path);
     }
-
   }
-
 
   public String getProperty(String keyName) {
     return properties.getProperty(keyName);

@@ -13,7 +13,7 @@ import org.apache.flink.streaming.api.windowing.time.Time;
 import org.apache.flink.streaming.api.windowing.windows.TimeWindow;
 import org.apache.flink.util.Collector;
 
-/** @author Wenqi Jiang & Zhuo Cheng  */
+/** @author Wenqi Jiang & Zhuo Cheng */
 public class AverageSpeedController {
 
   public static DataStream<AvgSpeedFine> issueFines(DataStream<VehicleReport> vehicleReports) {

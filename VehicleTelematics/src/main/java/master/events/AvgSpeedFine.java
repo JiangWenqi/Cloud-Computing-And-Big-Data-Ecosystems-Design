@@ -74,5 +74,3 @@ public class AvgSpeedFine {
     return time1 + ", " + time2 + ", " + vId + ", " + xWay + ", " + dir + ", " + avgSpd;
   }
 }
-
-

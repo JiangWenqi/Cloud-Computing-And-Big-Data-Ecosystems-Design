@@ -2,12 +2,10 @@ package master.functions;
 
 import master.events.SpeedFine;
 import master.events.VehicleReport;
-import master.utils.ConfigUtil;
 import master.utils.Constants;
 import org.apache.flink.api.common.functions.FlatMapFunction;
 import org.apache.flink.streaming.api.datastream.DataStream;
 import org.apache.flink.util.Collector;
-
 
 /**
  * Issue a ticket (Time, VID, XWay, Seg, Dir, Spd)

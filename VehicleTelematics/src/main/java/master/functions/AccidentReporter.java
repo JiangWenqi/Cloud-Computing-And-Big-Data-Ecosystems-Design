@@ -13,7 +13,7 @@ import org.apache.flink.util.Collector;
 
 import java.util.Iterator;
 
-/** @author Wenqi Jiang & Zhuo Cheng*/
+/** @author Wenqi Jiang & Zhuo Cheng */
 public class AccidentReporter {
 
   public static DataStream<AccidentReport> report(DataStream<VehicleReport> vehicleReports) {
