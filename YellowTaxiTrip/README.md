@@ -1,5 +1,20 @@
 # Yellow Taxi and Limousine Commission Trips
 
+## Deployment
+
+### Install `Oracle Java 11`
+### Download the `Apache Flink` from [official website](https://flink.apache.org/downloads.html).
+### Start/Stop Local Cluster:
+```shell
+cd ~/Tools/flink-1.14.4/bin
+./start-cluster.sh
+./stop-cluster.sh
+```
+### Check if the cluster is running: `localhost:8081`
+> Note: If the cluster is not running, you can check the logs in the `flink-1.14.4/log` folder.
+
+---
+
 ## Description
 
 New York Taxi and Limousine Commission stores all trips done by yellow and green taxis. This data is reported by each taxi and is sent to a data center that processes this information for different purposes.
@@ -41,6 +56,7 @@ Date, NumberOfTrips, CostAvg.
 ```
 
 This is an example of the expected output (pay attention to the output format):
+
 ![CongestedArea](./doc/images/task1_output.png)
 
 #### Notes:
@@ -52,8 +68,51 @@ This is an example of the expected output (pay attention to the output format):
 The commission wants to register when a vendorID is saturated. A vendor is saturated when a trip starts in less than 10 minutes after the previous trip finished. 
 If there are two or more consecutive trips from a vendor (a trip starts in less than 10 minutes after the previous trip finished), a tuple is generated with this information : vendorID, start of the first trip (`tpep_pickup_datetime`), finish time of the last trip, total number of consecutive trips.
 
-An example of the expected output is (pay attention to the output format) :
+An example of the expected output is (pay attention to the output format):
+
 ![SaturatedVendor](./doc/images/task2_output.png)
+
 #### Notes:
 1. The program name must be SaturatedVendor.
 2. If the field trip_distance has no value, replace it by 0.0.
+
+## Information
+
+### 1. Data file:
+
+The file with taxi data is available at:
+https://dl.lsdupm.ovh/CLOUD/2122/July/yellow_tripdata_2022-03.csv
+
+### 2. Software requirements
+
+The project must be implemented using **_Oracle Java 11_** and **_Flink 1.14.0_**. 
+Please, check the most suitable type of window at https://nightlies.apache.org/flink/flink-docs-master/docs/dev/datastream/operators/windows/
+
+### 3. Parallelism
+
+The parallelism for the write operation to the output files must be 1.
+
+### 4. Execution
+
+The project will be tested using the following procedure from the root folder of your project:
+
+- `mvn clean package`
+- `link run -c es.upm.fi.cloud.YellowTaxiTrip.CLASS YellowTaxiTrip-1.0-SNAPSHOT.jar --input $PATH_TO_INPUT_FILE --output $PATH_TO_OUTPUT_FILE`
+    Where:
+    - `CLASS` is the java class of the exercise (`CongestionArea`, `SaturatedVendor`)
+    - `$PATH_TO_INPUT_FILE` is the full path to the input file, i.e. `/home/user/yellow_tripdata_2022-03.csv`
+    - `$PATH_TO_OUTPUT_FILE` is the full path to the output file, i.e. `/home/user/outputFolder/congestionArea.csv` or `/home/user/outputFolder/saturatedVendor.csv`
+
+### 5. Submission
+- Groups of two students from the same master program
+- Only one submission per group
+- Submission name: surnameStudent1-surnameStudent2.zip
+- The zip file must have this structure:
+    - `YellowTaxiTrip/`
+      - `src/` 
+      - `pom.xml`
+- Exercises must be implemented as efficient as possible.
+- The zip file must be uploaded to Moodle by 3th July 2022 at 23:55
+
+### 6. Evaluation
+Each exercise will be evaluated independently. The execution time and the memory usage will be taken into account in the grade.
