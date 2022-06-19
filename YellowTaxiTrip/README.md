@@ -13,6 +13,13 @@ cd ~/Tools/flink-1.14.4/bin
 ### Check if the cluster is running: `localhost:8081`
 > Note: If the cluster is not running, you can check the logs in the `flink-1.14.4/log` folder.
 
+## Useful Commands
+```shell
+# read parquet file
+brew install parquet-tools
+parquet-tools head yellow_tripdata_2022-03.parquet
+parquet-tools schema -d yellow_tripdata_2022-03.parquet
+```
 ---
 
 ## Description
@@ -82,7 +89,7 @@ An example of the expected output is (pay attention to the output format):
 
 The file with taxi data is available at:
 https://dl.lsdupm.ovh/CLOUD/2122/July/yellow_tripdata_2022-03.csv
-
+https://www1.nyc.gov/site/tlc/about/tlc-trip-record-data.page
 ### 2. Software requirements
 
 The project must be implemented using **_Oracle Java 11_** and **_Flink 1.14.0_**. 
@@ -97,7 +104,7 @@ The parallelism for the write operation to the output files must be 1.
 The project will be tested using the following procedure from the root folder of your project:
 
 - `mvn clean package`
-- `link run -c es.upm.fi.cloud.YellowTaxiTrip.CLASS YellowTaxiTrip-1.0-SNAPSHOT.jar --input $PATH_TO_INPUT_FILE --output $PATH_TO_OUTPUT_FILE`
+- `flink run -c es.upm.fi.cloud.YellowTaxiTrip.CLASS YellowTaxiTrip-1.0-SNAPSHOT.jar --input $PATH_TO_INPUT_FILE --output $PATH_TO_OUTPUT_FILE`
     Where:
     - `CLASS` is the java class of the exercise (`CongestionArea`, `SaturatedVendor`)
     - `$PATH_TO_INPUT_FILE` is the full path to the input file, i.e. `/home/user/yellow_tripdata_2022-03.csv`
