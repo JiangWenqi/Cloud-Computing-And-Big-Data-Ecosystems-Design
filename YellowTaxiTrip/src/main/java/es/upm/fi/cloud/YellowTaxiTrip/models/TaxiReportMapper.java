@@ -64,7 +64,6 @@ public class TaxiReportMapper implements MapFunction<String, TaxiReport> {
                 report.setTollsAmount(Double.parseDouble(fields[14]));
             }
             if (fields[15] != null && fields[15].length() > 0) {
-
                 report.setImprovementSurcharge(Double.parseDouble(fields[15]));
             }
             if (fields[16] != null && fields[16].length() > 0) {
