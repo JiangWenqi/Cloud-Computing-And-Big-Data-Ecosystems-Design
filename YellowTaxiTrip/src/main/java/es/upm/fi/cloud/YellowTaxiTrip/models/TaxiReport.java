@@ -1,4 +1,4 @@
-package es.upm.fi.cloud.YellowTaxiTrip.model;
+package es.upm.fi.cloud.YellowTaxiTrip.models;
 
 import java.sql.Timestamp;
 
