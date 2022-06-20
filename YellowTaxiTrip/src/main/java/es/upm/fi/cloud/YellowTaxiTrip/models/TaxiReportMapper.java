@@ -3,6 +3,10 @@ package es.upm.fi.cloud.YellowTaxiTrip.models;
 import org.apache.flink.api.common.functions.MapFunction;
 
 import java.sql.Timestamp;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.TimeZone;
 import java.util.logging.Logger;
 
 /**
@@ -12,6 +16,11 @@ public class TaxiReportMapper implements MapFunction<String, TaxiReport> {
 
     private static final Logger LOGGER = Logger.getLogger(TaxiReportMapper.class.getName());
 
+    private Date parseDate(String dateString) throws ParseException {
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        formatter.setTimeZone(TimeZone.getTimeZone("GMT+2"));
+        return formatter.parse(dateString);
+    }
 
     @Override
     public TaxiReport map(String line) throws Exception {
@@ -22,10 +31,10 @@ public class TaxiReportMapper implements MapFunction<String, TaxiReport> {
                 report.setVendorId(Integer.parseInt(fields[0]));
             }
             if (fields[1] != null && fields[1].length() > 0) {
-                report.setTpepPickupDatetime(Timestamp.valueOf(fields[1]));
+                report.setTpepPickupDatetime(parseDate(fields[1]));
             }
             if (fields[2] != null && fields[2].length() > 0) {
-                report.setTpepDropoffDatetime(Timestamp.valueOf(fields[2]));
+                report.setTpepDropoffDatetime(parseDate(fields[2]));
             }
             if (fields[3] != null && fields[3].length() > 0) {
                 report.setPassengerCount(Double.parseDouble(fields[3]));

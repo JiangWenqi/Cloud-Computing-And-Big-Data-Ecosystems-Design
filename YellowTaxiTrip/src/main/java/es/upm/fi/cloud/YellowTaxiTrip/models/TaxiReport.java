@@ -1,6 +1,7 @@
 package es.upm.fi.cloud.YellowTaxiTrip.models;
 
 import java.sql.Timestamp;
+import java.util.Date;
 
 /**
  * @author wenqi jiang
@@ -15,11 +16,11 @@ public class TaxiReport {
     /**
      * tpep_pickup_datetime: The date and time when the meter was engaged.
      */
-    private Timestamp tpepPickupDatetime;
+    private Date tpepPickupDatetime;
     /**
      * tpep_dropoff_datetime: The date and time when the meter was disengaged.
      */
-    private Timestamp tpepDropoffDatetime;
+    private Date tpepDropoffDatetime;
     /**
      * passenger_count: The number of passengers in the vehicle. This is a driver-entered value.
      */
@@ -100,8 +101,8 @@ public class TaxiReport {
 
     public TaxiReport() {
         vendorId = 0;
-        tpepPickupDatetime = new Timestamp(0);
-        tpepDropoffDatetime = new Timestamp(0);
+        tpepPickupDatetime = null;
+        tpepDropoffDatetime = null;
         passengerCount = 0.0;
         tripDistance = 0.0;
         rateCodeId = 0.0;
@@ -150,19 +151,19 @@ public class TaxiReport {
         this.vendorId = vendorId;
     }
 
-    public Timestamp getTpepPickupDatetime() {
+    public Date getTpepPickupDatetime() {
         return tpepPickupDatetime;
     }
 
-    public void setTpepPickupDatetime(Timestamp tpepPickupDatetime) {
+    public void setTpepPickupDatetime(Date tpepPickupDatetime) {
         this.tpepPickupDatetime = tpepPickupDatetime;
     }
 
-    public Timestamp getTpepDropoffDatetime() {
+    public Date getTpepDropoffDatetime() {
         return tpepDropoffDatetime;
     }
 
-    public void setTpepDropoffDatetime(Timestamp tpepDropoffDatetime) {
+    public void setTpepDropoffDatetime(Date tpepDropoffDatetime) {
         this.tpepDropoffDatetime = tpepDropoffDatetime;
     }
 

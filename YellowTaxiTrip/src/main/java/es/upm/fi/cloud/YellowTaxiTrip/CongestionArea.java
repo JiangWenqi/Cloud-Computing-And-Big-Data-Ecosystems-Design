@@ -30,7 +30,7 @@ import java.util.logging.Logger;
 public class CongestionArea {
 
     private static final Logger LOGGER = Logger.getLogger(CongestionArea.class.getName());
-    private static final String INPUT_PATH = "file:///Users/wenqi/Projects/Study/Cloud-Computing-And-Big-Data-Ecosystems-Design/YellowTaxiTrip/src/main/resources/yellow_tripdata_2022-03_sample.csv";
+    private static final String INPUT_PATH = "file:///Users/wenqi/Projects/Study/Cloud-Computing-And-Big-Data-Ecosystems-Design/YellowTaxiTrip/src/main/resources/yellow_tripdata_2022-03.csv";
 
 
     /**
@@ -41,11 +41,12 @@ public class CongestionArea {
         final StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
         DataStream<String> rawFile = env.readTextFile(INPUT_PATH);
         DataStream<TaxiReport> taxiReports = rawFile
-//                .filter(line -> !line.isEmpty())
+                .filter(line -> !line.isEmpty())
                 .map(new TaxiReportMapper())
                 .filter(Objects::nonNull)
                 .assignTimestampsAndWatermarks(
-                        WatermarkStrategy.<TaxiReport>forBoundedOutOfOrderness(Duration.ofMinutes(5))
+//                        WatermarkStrategy.<TaxiReport>forBoundedOutOfOrderness(Duration.ofMinutes(5))
+                        WatermarkStrategy.<TaxiReport>forMonotonousTimestamps()
                                 .withTimestampAssigner((event, timestamp) -> event.getTpepPickupDatetime().getTime())
                 );
 
@@ -53,6 +54,7 @@ public class CongestionArea {
                 .filter(taxiReport -> taxiReport.getCongestionSurcharge() > 0)
                 .windowAll(TumblingEventTimeWindows.of(Time.days(1)))
                 .apply(new CongestionAreaFunction());
+        System.out.println("================ Congestion area reports: ====================");
         congestedAreaReports.print();
         env.execute("Congestion Area");
     }
