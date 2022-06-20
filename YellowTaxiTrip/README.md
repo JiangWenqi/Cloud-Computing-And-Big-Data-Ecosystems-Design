@@ -14,12 +14,22 @@ cd ~/Tools/flink-1.14.4/bin
 > Note: If the cluster is not running, you can check the logs in the `flink-1.14.4/log` folder.
 
 ## Useful Commands
+
+### Run the first task
+
+```shell
+mvn clean package
+flink run -c es.upm.fi.cloud.YellowTaxiTrip.CongestionArea YellowTaxiTrip-1.0-SNAPSHOT.jar --input /input/from/yellow_tripdata_2022-03.csv --output /output/to/congestionArea.csv
+```
+
+### Check the raw data from website (`parquet` format):
 ```shell
 # read parquet file
 brew install parquet-tools
 parquet-tools head yellow_tripdata_2022-03.parquet
 parquet-tools schema -d yellow_tripdata_2022-03.parquet
 ```
+
 ---
 
 ## Description
