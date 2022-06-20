@@ -5,13 +5,10 @@ import es.upm.fi.cloud.YellowTaxiTrip.models.CongestionAreaFunction;
 import es.upm.fi.cloud.YellowTaxiTrip.models.TaxiReport;
 import es.upm.fi.cloud.YellowTaxiTrip.models.TaxiReportMapper;
 import org.apache.flink.api.common.eventtime.WatermarkStrategy;
-import org.apache.flink.api.common.serialization.SimpleStringEncoder;
 import org.apache.flink.api.java.utils.ParameterTool;
 import org.apache.flink.core.fs.FileSystem;
-import org.apache.flink.core.fs.Path;
 import org.apache.flink.streaming.api.datastream.DataStream;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
-import org.apache.flink.streaming.api.functions.sink.filesystem.StreamingFileSink;
 import org.apache.flink.streaming.api.windowing.assigners.TumblingEventTimeWindows;
 import org.apache.flink.streaming.api.windowing.time.Time;
 
@@ -57,7 +54,6 @@ public class CongestionArea {
 
         // Setting up the streaming execution environment
         final StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
-
         // Reading the raw text from the input path
         DataStream<String> rawFile = env.readTextFile(inputPath);
         // Mapping the raw text to TaxiReport and assigning their event time
@@ -75,10 +71,9 @@ public class CongestionArea {
                 .windowAll(TumblingEventTimeWindows.of(Time.days(1)))
                 .apply(new CongestionAreaFunction());
         // Writing the result to the output path
-
         congestedAreaReports.writeAsText(outputPath, FileSystem.WriteMode.OVERWRITE)
                 .setParallelism(1);
-
+        LOGGER.info("Finished the Congestion Area Task !!!");
         env.execute("Congestion Area");
     }
 }
