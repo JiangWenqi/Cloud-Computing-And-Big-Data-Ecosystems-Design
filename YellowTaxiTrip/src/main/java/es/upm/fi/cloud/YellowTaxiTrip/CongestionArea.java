@@ -5,12 +5,16 @@ import es.upm.fi.cloud.YellowTaxiTrip.models.CongestionAreaFunction;
 import es.upm.fi.cloud.YellowTaxiTrip.models.TaxiReport;
 import es.upm.fi.cloud.YellowTaxiTrip.models.TaxiReportMapper;
 import org.apache.flink.api.common.eventtime.WatermarkStrategy;
+import org.apache.flink.api.common.serialization.SimpleStringEncoder;
+import org.apache.flink.api.java.utils.ParameterTool;
+import org.apache.flink.core.fs.FileSystem;
+import org.apache.flink.core.fs.Path;
 import org.apache.flink.streaming.api.datastream.DataStream;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
+import org.apache.flink.streaming.api.functions.sink.filesystem.StreamingFileSink;
 import org.apache.flink.streaming.api.windowing.assigners.TumblingEventTimeWindows;
 import org.apache.flink.streaming.api.windowing.time.Time;
 
-import java.time.Duration;
 import java.util.Objects;
 import java.util.logging.Logger;
 
@@ -30,18 +34,34 @@ import java.util.logging.Logger;
 public class CongestionArea {
 
     private static final Logger LOGGER = Logger.getLogger(CongestionArea.class.getName());
-    private static final String INPUT_PATH = "file:///Users/wenqi/Projects/Study/Cloud-Computing-And-Big-Data-Ecosystems-Design/YellowTaxiTrip/src/main/resources/yellow_tripdata_2022-03.csv";
 
 
     /**
      * set up the streaming execution environment
      */
     public static void main(String[] args) throws Exception {
+        // Getting the parameters from the command line
+        String inputPath;
+        String outputPath;
+        ParameterTool parameters = ParameterTool.fromArgs(args);
+        if (parameters.has("input")) {
+            inputPath = parameters.get("input");
+        } else {
+            throw new IllegalArgumentException("No input path specified");
+        }
+        if (parameters.has("output")) {
+            outputPath = parameters.get("output");
+        } else {
+            throw new IllegalArgumentException("No output path specified");
+        }
 
+        // Setting up the streaming execution environment
         final StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
-        DataStream<String> rawFile = env.readTextFile(INPUT_PATH);
-        DataStream<TaxiReport> taxiReports = rawFile
-                .filter(line -> !line.isEmpty())
+
+        // Reading the raw text from the input path
+        DataStream<String> rawFile = env.readTextFile(inputPath);
+        // Mapping the raw text to TaxiReport and assigning their event time
+        DataStream<TaxiReport> taxiReports = rawFile.filter(line -> !line.isEmpty())
                 .map(new TaxiReportMapper())
                 .filter(Objects::nonNull)
                 .assignTimestampsAndWatermarks(
@@ -49,13 +69,16 @@ public class CongestionArea {
                         WatermarkStrategy.<TaxiReport>forMonotonousTimestamps()
                                 .withTimestampAssigner((event, timestamp) -> event.getTpepPickupDatetime().getTime())
                 );
-
+        // Executing the task
         DataStream<CongestedAreaReport> congestedAreaReports = taxiReports
                 .filter(taxiReport -> taxiReport.getCongestionSurcharge() > 0)
                 .windowAll(TumblingEventTimeWindows.of(Time.days(1)))
                 .apply(new CongestionAreaFunction());
-        System.out.println("================ Congestion area reports: ====================");
-        congestedAreaReports.print();
+        // Writing the result to the output path
+
+        congestedAreaReports.writeAsText(outputPath, FileSystem.WriteMode.OVERWRITE)
+                .setParallelism(1);
+
         env.execute("Congestion Area");
     }
 }

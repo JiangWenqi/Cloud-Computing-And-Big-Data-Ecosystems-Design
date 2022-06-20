@@ -1,5 +1,6 @@
 package es.upm.fi.cloud.YellowTaxiTrip.models;
 
+import es.upm.fi.cloud.YellowTaxiTrip.utils.OutputFormatter;
 import java.util.Date;
 
 /**
@@ -9,6 +10,7 @@ public class CongestedAreaReport {
     private Date date;
     private int numberOfTrips;
     private double costAvg;
+
 
     public CongestedAreaReport() {
     }
@@ -45,10 +47,9 @@ public class CongestedAreaReport {
 
     @Override
     public String toString() {
-        return "CongestedAreaReport{" +
-                "date=" + date +
-                ", numberOfTrips=" + numberOfTrips +
-                ", costAvg=" + costAvg +
-                '}';
+        return OutputFormatter.DATE_FORMAT.format(date) + "," + numberOfTrips + "," + OutputFormatter.DECIMAL_FORMAT.format(costAvg);
+
     }
+
+
 }
