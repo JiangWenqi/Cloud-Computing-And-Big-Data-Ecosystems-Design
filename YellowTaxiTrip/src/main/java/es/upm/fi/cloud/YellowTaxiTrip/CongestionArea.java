@@ -4,16 +4,19 @@ import es.upm.fi.cloud.YellowTaxiTrip.models.CongestedAreaRecord;
 import es.upm.fi.cloud.YellowTaxiTrip.functions.CongestionAreaFunction;
 import es.upm.fi.cloud.YellowTaxiTrip.models.TaxiReport;
 import es.upm.fi.cloud.YellowTaxiTrip.functions.TaxiReportMapper;
-import org.apache.flink.api.common.eventtime.WatermarkStrategy;
+import es.upm.fi.cloud.YellowTaxiTrip.utils.Constants;
+import es.upm.fi.cloud.YellowTaxiTrip.utils.FileUtils;
 import org.apache.flink.api.java.utils.ParameterTool;
 import org.apache.flink.core.fs.FileSystem;
 import org.apache.flink.streaming.api.datastream.DataStream;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 import org.apache.flink.streaming.api.windowing.assigners.TumblingEventTimeWindows;
 import org.apache.flink.streaming.api.windowing.time.Time;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Objects;
-import java.util.logging.Logger;
+import java.util.TimeZone;
 
 /**
  * The commission wants to control the number of taxis accessing the most congested areas of the city,
@@ -30,47 +33,58 @@ import java.util.logging.Logger;
  */
 public class CongestionArea {
 
-    private static final Logger LOGGER = Logger.getLogger(CongestionArea.class.getName());
+    private static final Logger LOGGER = LoggerFactory.getLogger(CongestionArea.class);
 
+    private static final String INPUT = "input";
+    private static final String OUTPUT = "output";
 
     /**
      * set up the streaming execution environment
      */
     public static void main(String[] args) throws Exception {
-        // Getting the parameters from the command line
+        // 1. Getting the parameters from the command line and check if the parameters are correct
+
         String inputPath;
         String outputPath;
         ParameterTool parameters = ParameterTool.fromArgs(args);
-        if (parameters.has("input")) {
-            inputPath = parameters.get("input");
+        if (parameters.getNumberOfParameters() != 2) {
+            LOGGER.error("Usage: <input path> <output path>");
+            throw new IllegalArgumentException("Wrong number of arguments");
+        }
+        if (parameters.has(INPUT)) {
+            inputPath = parameters.get(INPUT);
+            LOGGER.info("Input path: {}", inputPath);
+            if (!FileUtils.isExist(inputPath)) {
+                throw new NullPointerException("The input path is not exist");
+            }
         } else {
             throw new IllegalArgumentException("No input path specified");
         }
-        if (parameters.has("output")) {
-            outputPath = parameters.get("output");
+        if (parameters.has(OUTPUT)) {
+            outputPath = parameters.get(OUTPUT);
+            FileUtils.recreateFile(outputPath);
+            LOGGER.info("Output path: {}", outputPath);
         } else {
             throw new IllegalArgumentException("No output path specified");
         }
 
-        // Setting up the streaming execution environment
+        // 2. Setting up the streaming execution environment
         final StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
-        // Reading the raw text from the input path
+        // 3. Reading the raw text from the input path
         DataStream<String> rawFile = env.readTextFile(inputPath);
-        // Mapping the raw text to TaxiReport and assigning their event time
-        DataStream<TaxiReport> taxiReports = rawFile.filter(line -> !line.isEmpty())
-                .map(new TaxiReportMapper())
+        // 4. Mapping the raw text to TaxiReport and assigning their event time
+        DataStream<TaxiReport> taxiReports = rawFile
+                .filter(line -> !line.isEmpty())
+                .map(new TaxiReportMapper(TimeZone.getTimeZone("GMT+2")))
                 .filter(Objects::nonNull)
-                .assignTimestampsAndWatermarks(
-                        //  WatermarkStrategy.<TaxiReport>forBoundedOutOfOrderness(Duration.ofMinutes(5))
-                        WatermarkStrategy.<TaxiReport>forMonotonousTimestamps()
-                                .withTimestampAssigner((event, timestamp) -> event.getTpepPickupDatetime().getTime())
-                );
-        // Executing the task
+                .assignTimestampsAndWatermarks(Constants.TAXI_REPORT_STRATEGY);
+        // 5. Calculating the number of taxis that went through a congested area
         DataStream<CongestedAreaRecord> congestedAreaRecords = taxiReports
                 .filter(taxiReport -> taxiReport.getCongestionSurcharge() > 0)
                 .windowAll(TumblingEventTimeWindows.of(Time.days(1)))
                 .apply(new CongestionAreaFunction());
-        // Writing the result to the output path
+
+        // 6. Writing the result to the output path
         congestedAreaRecords.writeAsText(outputPath, FileSystem.WriteMode.OVERWRITE)
                 .setParallelism(1);
         env.execute("Congestion Area");

@@ -2,24 +2,27 @@ package es.upm.fi.cloud.YellowTaxiTrip.functions;
 
 import es.upm.fi.cloud.YellowTaxiTrip.models.TaxiReport;
 import org.apache.flink.api.common.functions.MapFunction;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.TimeZone;
-import java.util.logging.Logger;
 
 /**
  * @author wenqi
  */
 public class TaxiReportMapper implements MapFunction<String, TaxiReport> {
 
-    private static final Logger LOGGER = Logger.getLogger(TaxiReportMapper.class.getName());
+    private static final Logger LOGGER = LoggerFactory.getLogger(TaxiReportMapper.class);
+    private final SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
-    private Date parseDate(String dateString) throws ParseException {
-        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
+    private TaxiReportMapper() {
         formatter.setTimeZone(TimeZone.getTimeZone("GMT+2"));
-        return formatter.parse(dateString);
+    }
+
+    public TaxiReportMapper(TimeZone timeZone) {
+        formatter.setTimeZone(timeZone);
     }
 
     @Override
@@ -31,10 +34,10 @@ public class TaxiReportMapper implements MapFunction<String, TaxiReport> {
                 report.setVendorId(Integer.parseInt(fields[0]));
             }
             if (fields[1] != null && fields[1].length() > 0) {
-                report.setTpepPickupDatetime(parseDate(fields[1]));
+                report.setTpepPickupDatetime(formatter.parse(fields[1]));
             }
             if (fields[2] != null && fields[2].length() > 0) {
-                report.setTpepDropoffDatetime(parseDate(fields[2]));
+                report.setTpepDropoffDatetime(formatter.parse(fields[2]));
             }
             if (fields[3] != null && fields[3].length() > 0) {
                 report.setPassengerCount(Double.parseDouble(fields[3]));
@@ -87,8 +90,8 @@ public class TaxiReportMapper implements MapFunction<String, TaxiReport> {
             }
             return report;
         } catch (Exception e) {
-            LOGGER.warning("Error in parsing the line: " + line);
-            LOGGER.warning(e.toString());
+            LOGGER.warn("Error in parsing the line: {}", line);
+            LOGGER.warn(e.toString());
             return null;
         }
     }

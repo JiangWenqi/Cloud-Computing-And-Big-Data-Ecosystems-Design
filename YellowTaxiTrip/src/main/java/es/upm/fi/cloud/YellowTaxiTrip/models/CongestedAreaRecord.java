@@ -1,7 +1,7 @@
 package es.upm.fi.cloud.YellowTaxiTrip.models;
 
-import es.upm.fi.cloud.YellowTaxiTrip.utils.OutputFormatter;
-
+import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 /**
@@ -12,9 +12,10 @@ public class CongestedAreaRecord {
     private int numberOfTrips;
     private double costAvg;
 
-    private static final OutputFormatter OUTPUT_FORMATTER = new OutputFormatter();
+    private final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+    private final DecimalFormat decimalFormat = new DecimalFormat("##.00");
 
-    public CongestedAreaRecord() {
+    private CongestedAreaRecord() {
         date = null;
         numberOfTrips = 0;
         costAvg = 0;
@@ -56,8 +57,8 @@ public class CongestedAreaRecord {
      */
     @Override
     public String toString() {
-        return OUTPUT_FORMATTER.dateFormat(date) + "," + numberOfTrips + "," + OUTPUT_FORMATTER.decimalFormat(costAvg);
 
+        return dateFormat.format(date) + "," + numberOfTrips + "," + decimalFormat.format(costAvg);
     }
 
 

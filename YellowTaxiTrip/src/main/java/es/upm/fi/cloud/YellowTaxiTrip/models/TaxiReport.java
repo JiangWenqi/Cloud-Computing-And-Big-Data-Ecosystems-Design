@@ -1,5 +1,7 @@
 package es.upm.fi.cloud.YellowTaxiTrip.models;
 
+import org.apache.flink.api.common.eventtime.WatermarkStrategy;
+
 import java.sql.Timestamp;
 import java.util.Date;
 
@@ -319,4 +321,6 @@ public class TaxiReport {
                 ", airportFee=" + airportFee +
                 '}';
     }
+
+
 }
