@@ -1,9 +1,9 @@
 package es.upm.fi.cloud.YellowTaxiTrip;
 
-import es.upm.fi.cloud.YellowTaxiTrip.models.CongestedAreaReport;
-import es.upm.fi.cloud.YellowTaxiTrip.models.CongestionAreaFunction;
+import es.upm.fi.cloud.YellowTaxiTrip.models.CongestedAreaRecord;
+import es.upm.fi.cloud.YellowTaxiTrip.functions.CongestionAreaFunction;
 import es.upm.fi.cloud.YellowTaxiTrip.models.TaxiReport;
-import es.upm.fi.cloud.YellowTaxiTrip.models.TaxiReportMapper;
+import es.upm.fi.cloud.YellowTaxiTrip.functions.TaxiReportMapper;
 import org.apache.flink.api.common.eventtime.WatermarkStrategy;
 import org.apache.flink.api.java.utils.ParameterTool;
 import org.apache.flink.core.fs.FileSystem;
@@ -61,19 +61,18 @@ public class CongestionArea {
                 .map(new TaxiReportMapper())
                 .filter(Objects::nonNull)
                 .assignTimestampsAndWatermarks(
-//                        WatermarkStrategy.<TaxiReport>forBoundedOutOfOrderness(Duration.ofMinutes(5))
+                        //  WatermarkStrategy.<TaxiReport>forBoundedOutOfOrderness(Duration.ofMinutes(5))
                         WatermarkStrategy.<TaxiReport>forMonotonousTimestamps()
                                 .withTimestampAssigner((event, timestamp) -> event.getTpepPickupDatetime().getTime())
                 );
         // Executing the task
-        DataStream<CongestedAreaReport> congestedAreaReports = taxiReports
+        DataStream<CongestedAreaRecord> congestedAreaRecords = taxiReports
                 .filter(taxiReport -> taxiReport.getCongestionSurcharge() > 0)
                 .windowAll(TumblingEventTimeWindows.of(Time.days(1)))
                 .apply(new CongestionAreaFunction());
         // Writing the result to the output path
-        congestedAreaReports.writeAsText(outputPath, FileSystem.WriteMode.OVERWRITE)
+        congestedAreaRecords.writeAsText(outputPath, FileSystem.WriteMode.OVERWRITE)
                 .setParallelism(1);
-        LOGGER.info("Finished the Congestion Area Task !!!");
         env.execute("Congestion Area");
     }
 }

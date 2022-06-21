@@ -1,8 +1,8 @@
-package es.upm.fi.cloud.YellowTaxiTrip.models;
+package es.upm.fi.cloud.YellowTaxiTrip.functions;
 
+import es.upm.fi.cloud.YellowTaxiTrip.models.TaxiReport;
 import org.apache.flink.api.common.functions.MapFunction;
 
-import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;

@@ -1,5 +1,7 @@
-package es.upm.fi.cloud.YellowTaxiTrip.models;
+package es.upm.fi.cloud.YellowTaxiTrip.functions;
 
+import es.upm.fi.cloud.YellowTaxiTrip.models.CongestedAreaRecord;
+import es.upm.fi.cloud.YellowTaxiTrip.models.TaxiReport;
 import org.apache.flink.streaming.api.functions.windowing.AllWindowFunction;
 import org.apache.flink.streaming.api.windowing.windows.TimeWindow;
 import org.apache.flink.util.Collector;
@@ -9,7 +11,7 @@ import java.util.Date;
 /**
  * @author wenqi
  */
-public class CongestionAreaFunction implements AllWindowFunction<TaxiReport, CongestedAreaReport, TimeWindow> {
+public class CongestionAreaFunction implements AllWindowFunction<TaxiReport, CongestedAreaRecord, TimeWindow> {
     /**
      * Evaluates the window and outputs none or several elements.
      *
@@ -19,7 +21,7 @@ public class CongestionAreaFunction implements AllWindowFunction<TaxiReport, Con
      * @throws Exception The function may throw exceptions to fail the program and trigger recovery.
      */
     @Override
-    public void apply(TimeWindow window, Iterable<TaxiReport> taxiReports, Collector<CongestedAreaReport> congestedAreaReport) throws Exception {
+    public void apply(TimeWindow window, Iterable<TaxiReport> taxiReports, Collector<CongestedAreaRecord> congestedAreaReport) throws Exception {
         double costAvg = 0;
         int numberOfTrips = 0;
         for (TaxiReport report : taxiReports) {
@@ -30,7 +32,7 @@ public class CongestionAreaFunction implements AllWindowFunction<TaxiReport, Con
             throw new NullPointerException("No taxi report in this window");
         }
         costAvg /= numberOfTrips;
-        CongestedAreaReport report = new CongestedAreaReport(new Date(window.getStart()), numberOfTrips, costAvg);
+        CongestedAreaRecord report = new CongestedAreaRecord(new Date(window.getStart()), numberOfTrips, costAvg);
         congestedAreaReport.collect(report);
     }
 

@@ -7,20 +7,20 @@ import java.util.Date;
 /**
  * @author wenqi
  */
-public class CongestedAreaReport {
+public class CongestedAreaRecord {
     private Date date;
     private int numberOfTrips;
     private double costAvg;
 
     private static final OutputFormatter OUTPUT_FORMATTER = new OutputFormatter();
 
-    public CongestedAreaReport() {
+    public CongestedAreaRecord() {
         date = null;
         numberOfTrips = 0;
         costAvg = 0;
     }
 
-    public CongestedAreaReport(Date date, int numberOfTrips, double costAvg) {
+    public CongestedAreaRecord(Date date, int numberOfTrips, double costAvg) {
         this.date = date;
         this.numberOfTrips = numberOfTrips;
         this.costAvg = costAvg;
