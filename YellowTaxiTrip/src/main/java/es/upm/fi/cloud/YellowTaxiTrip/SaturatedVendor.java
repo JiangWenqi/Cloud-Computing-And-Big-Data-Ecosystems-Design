@@ -37,6 +37,7 @@ public class SaturatedVendor {
         String inputPath;
         String outputPath;
         ParameterTool parameters = ParameterTool.fromArgs(args);
+        // make sure we have two parameters
         if (parameters.getNumberOfParameters() != 2) {
             LOGGER.error("Usage: <input path> <output path>");
             throw new IllegalArgumentException("Wrong number of arguments");
@@ -51,6 +52,7 @@ public class SaturatedVendor {
             throw new IllegalArgumentException("No input path specified");
         }
 
+        // create output file, if it existed, just delete it
         if (parameters.has(OUTPUT)) {
             outputPath = parameters.get(OUTPUT);
             FileUtils.recreateFile(outputPath);
@@ -65,8 +67,10 @@ public class SaturatedVendor {
         DataStream<String> rawFile = env.readTextFile(inputPath);
         // 4. Mapping the raw text to TaxiReport and assigning their event time
         DataStream<TaxiReport> taxiReports = rawFile.filter(line -> !line.isEmpty())
+                // set the time zone in reports to "GMT-11"
                 .map(new TaxiReportMapper(TimeZone.getTimeZone("GMT-11")))
                 .filter(Objects::nonNull)
+                // assign event timestamp
                 .assignTimestampsAndWatermarks(Constants.TAXI_REPORT_STRATEGY);
 
         // 5. Getting the saturated vendor
@@ -75,7 +79,7 @@ public class SaturatedVendor {
                 .countWindow(2, 1)
                 .apply(new SaturatedVendorFunction());
 
-        // 6. Writing the results to the output path
+        // 6. Writing the results to the output path, the parallelism for the write operation to the output files must be 1.
         saturatedVendorRecords.writeAsText(outputPath, FileSystem.WriteMode.OVERWRITE)
                 .setParallelism(1);
 

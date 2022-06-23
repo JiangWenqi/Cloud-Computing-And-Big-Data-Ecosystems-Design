@@ -106,6 +106,7 @@ public class TaxiReport {
         tpepPickupDatetime = null;
         tpepDropoffDatetime = null;
         passengerCount = 0.0;
+        // If the field trip_distance has no value, replace it by 0.0
         tripDistance = 0.0;
         rateCodeId = 0.0;
         storeAndFwdFlag = false;
@@ -119,6 +120,7 @@ public class TaxiReport {
         tollsAmount = 0.0;
         improvementSurcharge = 0.0;
         totalAmount = 0.0;
+        // If the field congestion_surcharge no value, replace it by 0.0
         congestionSurcharge = 0.0;
         airportFee = 0.0;
     }

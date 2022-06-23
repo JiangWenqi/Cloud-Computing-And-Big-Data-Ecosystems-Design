@@ -12,8 +12,6 @@ public class CongestedAreaRecord {
     private int numberOfTrips;
     private double costAvg;
 
-    private final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-    private final DecimalFormat decimalFormat = new DecimalFormat("##.00");
 
     private CongestedAreaRecord() {
         date = null;
@@ -57,7 +55,8 @@ public class CongestedAreaRecord {
      */
     @Override
     public String toString() {
-
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd");
+        DecimalFormat decimalFormat = new DecimalFormat("##.00");
         return dateFormat.format(date) + "," + numberOfTrips + "," + decimalFormat.format(costAvg);
     }
 

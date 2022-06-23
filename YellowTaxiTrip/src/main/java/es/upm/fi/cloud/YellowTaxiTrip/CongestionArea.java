@@ -43,7 +43,6 @@ public class CongestionArea {
      */
     public static void main(String[] args) throws Exception {
         // 1. Getting the parameters from the command line and check if the parameters are correct
-
         String inputPath;
         String outputPath;
         ParameterTool parameters = ParameterTool.fromArgs(args);
@@ -74,17 +73,24 @@ public class CongestionArea {
         DataStream<String> rawFile = env.readTextFile(inputPath);
         // 4. Mapping the raw text to TaxiReport and assigning their event time
         DataStream<TaxiReport> taxiReports = rawFile
+                // filter empty string
                 .filter(line -> !line.isEmpty())
+                // transfer raw string records to format taxi records and set the time zone to "GMT+2"
                 .map(new TaxiReportMapper(TimeZone.getTimeZone("GMT+2")))
+                // filter empty records
                 .filter(Objects::nonNull)
+                // set the event timestamp of records
                 .assignTimestampsAndWatermarks(Constants.TAXI_REPORT_STRATEGY);
         // 5. Calculating the number of taxis that went through a congested area
         DataStream<CongestedAreaRecord> congestedAreaRecords = taxiReports
+                // A taxi went through a congested area, if the congestion_surcharge field was greater than 0
                 .filter(taxiReport -> taxiReport.getCongestionSurcharge() > 0)
+                // time windows is a day
                 .windowAll(TumblingEventTimeWindows.of(Time.days(1)))
+                // calculate the result
                 .apply(new CongestionAreaFunction());
 
-        // 6. Writing the result to the output path
+        // 6. Writing the result to the output path, the parallelism for the write operation to the output files must be 1.
         congestedAreaRecords.writeAsText(outputPath, FileSystem.WriteMode.OVERWRITE)
                 .setParallelism(1);
         env.execute("Congestion Area");

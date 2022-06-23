@@ -13,11 +13,9 @@ import java.util.Date;
  */
 public class CongestionAreaFunction implements AllWindowFunction<TaxiReport, CongestedAreaRecord, TimeWindow> {
     /**
-     * Evaluates the window and outputs none or several elements.
-     *
      * @param window              The window that is being evaluated.
-     * @param taxiReports         The elements in the window being evaluated.
-     * @param congestedAreaReport A collector for emitting elements.
+     * @param taxiReports         The tax reports in the window being evaluated.
+     * @param congestedAreaReport A collector for emitting congested area report.
      * @throws Exception The function may throw exceptions to fail the program and trigger recovery.
      */
     @Override

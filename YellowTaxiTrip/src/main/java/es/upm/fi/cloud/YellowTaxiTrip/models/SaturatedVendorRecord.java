@@ -2,9 +2,10 @@ package es.upm.fi.cloud.YellowTaxiTrip.models;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.TimeZone;
 
 /**
+ * vendorID, start of the first trip (tpep_pickup_datetime), finish time of the last trip, total number of consecutive trips.
+ *
  * @author wenqi
  */
 public class SaturatedVendorRecord {
@@ -15,7 +16,6 @@ public class SaturatedVendorRecord {
     private Date finishTime;
     private Integer numberOfTrips;
 
-    SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
     public SaturatedVendorRecord() {
         vendorId = null;
@@ -66,6 +66,7 @@ public class SaturatedVendorRecord {
 
     @Override
     public String toString() {
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         return vendorId + "," + formatter.format(startTime) + "," + formatter.format(finishTime) + "," + numberOfTrips;
     }
 }

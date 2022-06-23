@@ -13,8 +13,8 @@ public class SaturatedVendorMapper implements MapFunction<TaxiReport, SaturatedV
      * The mapping method. Takes an element from the input data set and transforms it into exactly
      * one element.
      *
-     * @param taxiReport The input value.
-     * @return The transformed value
+     * @param taxiReport The input value, taxi report
+     * @return The transformed value SaturatedVendorRecord
      * @throws Exception This method may throw exceptions. Throwing an exception will cause the
      *                   operation to fail and may trigger recovery.
      */
