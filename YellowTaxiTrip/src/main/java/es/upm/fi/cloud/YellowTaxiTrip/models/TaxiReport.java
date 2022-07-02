@@ -6,7 +6,7 @@ import java.sql.Timestamp;
 import java.util.Date;
 
 /**
- * @author wenqi jiang
+ * @author Wenqi Jiang & Zhuo Cheng jiang
  */
 public class TaxiReport {
     /**

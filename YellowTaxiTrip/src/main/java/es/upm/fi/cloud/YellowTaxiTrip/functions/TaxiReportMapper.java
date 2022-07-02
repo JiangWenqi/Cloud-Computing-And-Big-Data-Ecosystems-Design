@@ -9,7 +9,7 @@ import java.text.SimpleDateFormat;
 import java.util.TimeZone;
 
 /**
- * @author wenqi
+ * @author Wenqi Jiang & Zhuo Cheng
  */
 public class TaxiReportMapper implements MapFunction<String, TaxiReport> {
 

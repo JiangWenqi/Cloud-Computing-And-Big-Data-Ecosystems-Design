@@ -9,7 +9,7 @@ import org.apache.flink.util.Collector;
 import java.util.Date;
 
 /**
- * @author wenqi
+ * @author Wenqi Jiang & Zhuo Cheng
  */
 public class CongestionAreaFunction implements AllWindowFunction<TaxiReport, CongestedAreaRecord, TimeWindow> {
     /**

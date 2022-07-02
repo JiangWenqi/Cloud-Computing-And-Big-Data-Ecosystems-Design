@@ -1,12 +1,11 @@
 package es.upm.fi.cloud.YellowTaxiTrip.functions;
 
-import es.upm.fi.cloud.YellowTaxiTrip.SaturatedVendor;
 import es.upm.fi.cloud.YellowTaxiTrip.models.SaturatedVendorRecord;
 import es.upm.fi.cloud.YellowTaxiTrip.models.TaxiReport;
 import org.apache.flink.api.common.functions.MapFunction;
 
 /**
- * @author wenqi
+ * @author Wenqi Jiang & Zhuo Cheng
  */
 public class SaturatedVendorMapper implements MapFunction<TaxiReport, SaturatedVendorRecord> {
     /**

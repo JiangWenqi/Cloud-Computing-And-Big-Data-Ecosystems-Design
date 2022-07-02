@@ -29,7 +29,7 @@ import java.util.TimeZone;
  * 4. This is a data streaming exercise
  * 5. The records are available because otherwise it is difficult for you to test the results.
  *
- * @author Wenqi
+ * @author Wenqi Jiang & Zhuo Cheng
  */
 public class CongestionArea {
 

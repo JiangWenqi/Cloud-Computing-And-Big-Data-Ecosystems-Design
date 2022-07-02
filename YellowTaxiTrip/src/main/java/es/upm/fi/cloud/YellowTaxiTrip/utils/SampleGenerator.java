@@ -7,7 +7,8 @@ import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 
 /**
- * @author wenqi
+ * @deprecated
+ * @author Wenqi Jiang & Zhuo Cheng
  */
 public class SampleGenerator {
 

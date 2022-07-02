@@ -6,7 +6,7 @@ import org.apache.flink.api.common.eventtime.WatermarkStrategy;
 import java.time.Duration;
 
 /**
- * @author wenqi
+ * @author Wenqi Jiang & Zhuo Cheng
  */
 public class Constants {
     /**

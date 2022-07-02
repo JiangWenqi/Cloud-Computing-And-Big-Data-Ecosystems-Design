@@ -6,7 +6,7 @@ import java.util.Date;
 /**
  * vendorID, start of the first trip (tpep_pickup_datetime), finish time of the last trip, total number of consecutive trips.
  *
- * @author wenqi
+ * @author Wenqi Jiang & Zhuo Cheng
  */
 public class SaturatedVendorRecord {
 

@@ -8,7 +8,7 @@ import org.apache.flink.util.Collector;
 import java.util.Iterator;
 
 /**
- * @author Wenqi
+ * @author Wenqi Jiang & Zhuo Cheng
  */
 public class SaturatedVendorFunction implements WindowFunction<SaturatedVendorRecord, SaturatedVendorRecord, Integer, GlobalWindow> {
 

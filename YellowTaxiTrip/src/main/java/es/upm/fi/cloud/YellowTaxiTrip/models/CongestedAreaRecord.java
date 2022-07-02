@@ -5,7 +5,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 /**
- * @author wenqi
+ * @author Wenqi Jiang & Zhuo Cheng
  */
 public class CongestedAreaRecord {
     private Date date;
